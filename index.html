@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Services Quotation Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* Adjusted padding for smaller screens */
+            padding: 1rem; /* Default padding for all screens (mobile-first) */
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            /* Adjusted padding for smaller screens */
+            padding: 1rem; /* Default padding for container (mobile-first) */
+            max-width: 900px;
+            width: 100%; /* Ensures container is fluid on smaller screens */
+        }
+        /* Specific padding for larger screens */
+        @media (min-width: 768px) { /* md breakpoint */
+            body {
+                padding: 2rem;
+            }
+            .container {
+                padding: 2.5rem;
+            }
+        }
+
+        input[type="text"], input[type="date"], input[type="number"], textarea {
+            width: 100%; /* Ensures inputs take full width of their parent column */
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem; /* More rounded input fields */
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            margin-top: 0.25rem;
+        }
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .btn-primary {
+            background-color: #6366f1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5;
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .table-input th, .table-input td {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            /* Adjust font size for table cells on small screens */
+            font-size: 0.85rem;
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .table-input th, .table-input td {
+                font-size: 0.9rem; /* Restore slightly larger font on larger screens */
+            }
+        }
+        .table-input th {
+            background-color: #f9fafb;
+            text-align: left;
+        }
+        .table-input input {
+            border: none;
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .add-row-btn {
+            background-color: #22c55e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+        .add-row-btn:hover {
+            background-color: #16a34a;
+        }
+        .delete-row-btn {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+            font-size: 0.8rem;
+        }
+        .delete-row-btn:hover {
+            background-color: #dc2626;
+        }
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+        .message-box.error {
+            background-color: #f44336;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Adjusted font size for main title on smaller screens -->
+        <h1 class="text-3xl sm:text-4xl font-bold text-center text-red-700 mb-8 rounded-xl p-3 bg-red-100 shadow-md">SECURITY SERVICES QUOTATION</h1>
+
+        <!-- Message Box -->
+        <div id="messageBox" class="message-box"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div>
+                <label for="toName" class="block text-gray-700 text-sm font-semibold mb-1">To:</label>
+                <input type="text" id="toName" placeholder="Recipient Name" class="mb-2">
+                <input type="text" id="toAddress" placeholder="Recipient Address" class="mb-2">
+                <input type="text" id="toPhone" placeholder="Recipient Phone" class="mb-2">
+                <input type="text" id="toEmail" placeholder="Recipient Email">
+            </div>
+            <div class="mb-4">
+                <label for="fromCompany" class="block text-gray-700 text-sm font-semibold mb-1">From:</label>
+                <input type="text" id="fromCompany" value="Hefty Bouncer Service" placeholder="Your Company Name" class="mb-2">
+                <input type="text" id="fromAddress" value="Leisure Mall, Adeniran Ogunsanya, Surulere." placeholder="Your Address" class="mb-2">
+                <input type="text" id="fromPhone" value="09071479384, 08108132539" placeholder="Your Phone" class="mb-2">
+                <input type="text" id="fromEmail" value="emmanueluduna@gmail.com" placeholder="Your Email">
+                <label class="hidden" for="logoUrl" class="block text-gray-700 text-sm font-semibold mt-4 mb-1">Company Logo URL (for Watermark):</label>
+                <input class="hidden" type="text" id="logoUrl" placeholder="e.g., https://placehold.co/300x150/000/FFF?text=Logo" value="https://res.cloudinary.com/dgd6w8rbt/image/upload/v1755096051/hefty-bouncer.jpg">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div>
+                <label for="quotationDate" class="block text-gray-700 text-sm font-semibold mb-1">Quotation Details: Date</label>
+                <input type="date" id="quotationDate">
+            </div>
+            <div>
+                <label for="quotationNumber" class="block text-gray-700 text-sm font-semibold mb-1">Quotation Number</label>
+                <input type="text" id="quotationNumber" placeholder="SS2401">
+            </div>
+            <div>
+                <label for="dueDate" class="block text-gray-700 text-sm font-semibold mb-1">Due Date</label>
+                <input type="date" id="dueDate">
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <label for="subject" class="block text-gray-700 text-sm font-semibold mb-1">Subject:</label>
+            <input type="text" id="subject" value="Quotation For Security Services" placeholder="Subject of Quotation">
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Services</h2>
+        <!-- Added overflow-x-auto to ensure horizontal scrolling for the table on small screens -->
+        <div class="overflow-x-auto rounded-xl shadow-md">
+            <table class="w-full border-collapse rounded-xl overflow-hidden mb-6 table-input">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border">Description</th>
+                        <th class="py-2 px-4 border">Quantity</th>
+                        <th class="py-2 px-4 border">Rate per HR (N)</th>
+                        <th class="py-2 px-4 border">Total Amount (N)</th>
+                        <th class="py-2 px-4 border"></th>
+                    </tr>
+                </thead>
+                <tbody id="servicesTableBody">
+                    <!-- Example Row -->
+                    <tr>
+                        <td><input type="text" value="Security Guard" oninput="calculateRow(this)"></td>
+                        <td><input type="number" value="1" oninput="calculateRow(this)"></td>
+                        <td><input type="number" value="0" oninput="calculateRow(this)"></td>
+                        <td><input type="text" value="0" readonly></td>
+                        <td><button class="delete-row-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Armed Guard" oninput="calculateRow(this)"></td>
+                        <td><input type="number" value="1" oninput="calculateRow(this)"></td>
+                        <td><input type="number" value="0" oninput="calculateRow(this)"></td>
+                        <td><input type="text" value="0" readonly></td>
+                        <td><button class="delete-row-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Supervisor" oninput="calculateRow(this)"></td>
+                        <td><input type="number" value="1" oninput="calculateRow(this)"></td>
+                        <td><input type="number" value="0" oninput="calculateRow(this)"></td>
+                        <td><input type="text" value="0" readonly></td>
+                        <td><button class="delete-row-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button onclick="addRow()" class="add-row-btn mb-8">Add Service Row</button>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Terms & Conditions</h2>
+                <textarea id="terms" rows="5" placeholder="Enter terms and conditions...">1. For Weekend & Night Shifts Additional 20% Will Be Charged.
+2. You Can Terminate The Service By Giving 15 Days' Notice.</textarea>
+            </div>
+            <div class="flex flex-col items-end">
+                <div class="w-full max-w-sm">
+                    <div class="flex justify-between items-center text-lg font-semibold text-gray-800 mb-2">
+                        <span>Subtotal:</span>
+                        <span id="subtotalAmount">N0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-lg font-semibold text-gray-800 mb-2">
+                        <span>Tax (5%):</span>
+                        <span id="taxAmount">N0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xl font-bold text-red-700 border-t-2 border-red-700 pt-4 mt-4">
+                        <span>Grand Total:</span>
+                        <span id="grandTotalAmount">N0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button onclick="generatePdf()" class="btn-primary text-xl px-8 py-3 rounded-full shadow-lg">Generate & Download PDF</button>
+        </div>
+    </div>
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        // Function to show messages (success/error)
+        function showMessage(message, type = 'success') {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = 'message-box'; // Reset classes
+            if (type === 'error') {
+                messageBox.classList.add('error');
+            }
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize values
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('quotationDate').valueAsDate = new Date();
+            document.getElementById('dueDate').valueAsDate = new Date(new Date().setDate(new Date().getDate() + 10)); // 10 days from now
+            calculateTotals(); // Initial calculation
+        });
+
+        // Calculate total for a single row
+        function calculateRow(inputElement) {
+            const row = inputElement.closest('tr');
+            const quantity = parseFloat(row.children[1].querySelector('input').value) || 0;
+            const rate = parseFloat(row.children[2].querySelector('input').value) || 0;
+            const total = quantity * rate;
+            row.children[3].querySelector('input').value = total.toFixed(2);
+            calculateTotals();
+        }
+
+        // Calculate subtotal, tax, and grand total
+        function calculateTotals() {
+            let subtotal = 0;
+            const serviceRows = document.querySelectorAll('#servicesTableBody tr');
+            serviceRows.forEach(row => {
+                const totalAmount = parseFloat(row.children[3].querySelector('input').value) || 0;
+                subtotal += totalAmount;
+            });
+
+            const taxRate = 0.05; // 5%
+            const tax = subtotal * taxRate;
+            const grandTotal = subtotal + tax;
+
+            document.getElementById('subtotalAmount').textContent = `N${subtotal.toFixed(2)}`;
+            document.getElementById('taxAmount').textContent = `N${tax.toFixed(2)}`;
+            document.getElementById('grandTotalAmount').textContent = `N${grandTotal.toFixed(2)}`;
+        }
+
+        // Add a new service row
+        function addRow() {
+            const tableBody = document.getElementById('servicesTableBody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" value="" oninput="calculateRow(this)" placeholder="Service Description"></td>
+                <td><input type="number" value="1" oninput="calculateRow(this)"></td>
+                <td><input type="number" value="0" oninput="calculateRow(this)"></td>
+                <td><input type="text" value="0.00" readonly></td>
+                <td><button class="delete-row-btn" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            tableBody.appendChild(newRow);
+            calculateTotals();
+        }
+
+        // Delete a service row
+        function deleteRow(buttonElement) {
+            const row = buttonElement.closest('tr');
+            row.remove();
+            calculateTotals();
+            showMessage('Service row deleted!');
+        }
+
+        // Generate and download PDF
+        async function generatePdf() {
+            const doc = new jsPDF();
+
+            const toName = document.getElementById('toName').value;
+            const toAddress = document.getElementById('toAddress').value;
+            const toPhone = document.getElementById('toPhone').value;
+            const toEmail = document.getElementById('toEmail').value;
+
+            const fromCompany = document.getElementById('fromCompany').value;
+            const fromAddress = document.getElementById('fromAddress').value;
+            const fromPhone = document.getElementById('fromPhone').value;
+            const fromEmail = document.getElementById('fromEmail').value;
+            const logoUrl = document.getElementById('logoUrl').value; // Get logo URL
+
+            const quotationDate = document.getElementById('quotationDate').value;
+            const quotationNumber = document.getElementById('quotationNumber').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const subject = document.getElementById('subject').value;
+            const terms = document.getElementById('terms').value;
+
+            const subtotal = document.getElementById('subtotalAmount').textContent;
+            const tax = document.getElementById('taxAmount').textContent;
+            const grandTotal = document.getElementById('grandTotalAmount').textContent;
+
+            // Basic Validation
+            if (!toName || !fromCompany || !quotationDate || !quotationNumber || !dueDate || !subject) {
+                showMessage('Please fill in all required fields (To, From, Dates, Subject, Number).', 'error');
+                return;
+            }
+
+            // Add Logo as Watermark
+            if (logoUrl) {
+                try {
+                    const img = new Image();
+                    img.src = logoUrl;
+                    img.onload = () => {
+                        const imgWidth = doc.internal.pageSize.getWidth() * 0.3; // 30% of page width
+                        const imgHeight = (img.height * imgWidth) / img.width; // Maintain aspect ratio
+
+                        const xPos = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+                        const yPos = (doc.internal.pageSize.getHeight() - imgHeight) / 2;
+
+                        // Corrected: GState is a property of the doc instance, not jsPDF directly
+                        doc.setGState(new doc.GState({opacity: 0.1})); // Set transparency
+                        doc.addImage(img, 'PNG', xPos, yPos, imgWidth, imgHeight);
+                        doc.setGState(new doc.GState({opacity: 1})); // Reset transparency
+
+                        drawPdfContent();
+                    };
+                    img.onerror = () => {
+                        showMessage('Failed to load logo image. Generating PDF without watermark.', 'error');
+                        drawPdfContent(); // Generate PDF even if image fails to load
+                    };
+                } catch (e) {
+                    console.error("Error loading image:", e);
+                    showMessage('Error processing logo image. Generating PDF without watermark.', 'error');
+                    drawPdfContent();
+                }
+            } else {
+                drawPdfContent(); // Generate PDF if no logo URL is provided
+            }
+
+            function drawPdfContent() {
+                // Title
+                doc.setFontSize(24);
+                doc.setTextColor(178, 34, 34); // Firebrick color
+                doc.text("SECURITY SERVICES QUOTATION", doc.internal.pageSize.width / 2, 30, { align: "center" });
+                doc.setLineWidth(0.5);
+                doc.line(20, 35, doc.internal.pageSize.width - 20, 35); // Underline
+
+                // From and To Information
+                doc.setFontSize(10);
+                doc.setTextColor(0); // Black
+                doc.setFont("helvetica", "normal"); // Reset font style
+
+                doc.text("To:", 20, 50);
+                doc.setFont("helvetica", "bold");
+                doc.text(toName, 20, 55);
+                doc.setFont("helvetica", "normal");
+                doc.text(toAddress, 20, 60);
+                doc.text(toPhone, 20, 65);
+                doc.text(toEmail, 20, 70);
+
+                doc.text("From:", 120, 50);
+                doc.setFont("helvetica", "bold");
+                doc.text(fromCompany, 120, 55);
+                doc.setFont("helvetica", "normal");
+                doc.text(fromAddress, 120, 60);
+                doc.text(fromPhone, 120, 65);
+                doc.text(fromEmail, 120, 70);
+
+                // Quotation Details
+                let yOffset = 85;
+                doc.setFontSize(10);
+                doc.text("Quotation Details:", 20, yOffset);
+                yOffset += 5;
+                doc.text(`Date: ${quotationDate}`, 20, yOffset);
+                yOffset += 5;
+                doc.text(`Quotation Number: ${quotationNumber}`, 20, yOffset);
+                yOffset += 5;
+                doc.text(`Due Date: ${dueDate}`, 20, yOffset);
+                yOffset += 10;
+                doc.text(`Subject: ${subject}`, 20, yOffset);
+
+                // Services Table
+                yOffset += 20;
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.setFillColor(240, 240, 240); // Light grey header background
+                doc.rect(20, yOffset, 170, 7, "F"); // Header background
+
+                doc.text("Description", 22, yOffset + 5);
+                doc.text("Quantity", 80, yOffset + 5);
+                doc.text("Rate per HR", 110, yOffset + 5);
+                doc.text("Total Amount", 150, yOffset + 5);
+                doc.setFont("helvetica", "normal");
+
+                yOffset += 7;
+                const serviceRows = document.querySelectorAll('#servicesTableBody tr');
+                serviceRows.forEach(row => {
+                    const description = row.children[0].querySelector('input').value;
+                    const quantity = row.children[1].querySelector('input').value;
+                    const rate = row.children[2].querySelector('input').value;
+                    const total = row.children[3].querySelector('input').value;
+
+                    doc.text(description, 22, yOffset + 5);
+                    doc.text(quantity, 80, yOffset + 5);
+                    doc.text(`N${rate}`, 110, yOffset + 5);
+                    doc.text(`N${total}`, 150, yOffset + 5);
+                    yOffset += 7;
+                });
+
+                // Terms & Conditions
+                yOffset += 10;
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Terms & Conditions:", 20, yOffset);
+                doc.setFont("helvetica", "normal");
+                yOffset += 5;
+                const termsLines = doc.splitTextToSize(terms, 80); // Wrap terms to fit
+                doc.text(termsLines, 20, yOffset);
+
+                // Totals
+                yOffset = yOffset < 180 ? 180 : yOffset + 20; // Ensure enough space at bottom
+                doc.setFontSize(11);
+                doc.setFont("helvetica", "bold");
+                doc.text(`Subtotal: ${subtotal}`, 130, yOffset);
+                yOffset += 7;
+                doc.text(`Tax (5%): ${tax}`, 130, yOffset);
+                yOffset += 7;
+                doc.line(130, yOffset, 180, yOffset); // Line above Grand Total
+                yOffset += 5;
+                doc.setFontSize(14);
+                doc.setTextColor(178, 34, 34); // Firebrick color
+                doc.text(`Grand Total: ${grandTotal}`, 130, yOffset);
+
+                // Signature placeholder
+                doc.setFontSize(10);
+                doc.setTextColor(0);
+                doc.setFont("helvetica", "normal");
+                doc.text("Signature:", doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 30, { align: "right" });
+                doc.line(doc.internal.pageSize.width - 80, doc.internal.pageSize.height - 35, doc.internal.pageSize.width - 20, doc.internal.pageSize.height - 35); // Signature line
+
+                doc.save(`Quotation_${quotationNumber}.pdf`);
+                showMessage('PDF generated and downloaded successfully!');
+            }
+        }
+    </script>
+</body>
+</html>
